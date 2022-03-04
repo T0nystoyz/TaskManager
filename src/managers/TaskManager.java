@@ -1,8 +1,8 @@
-package Managers;
+package managers;
 
-import Tasks.Epic;
-import Tasks.Subtask;
-import Tasks.Task;
+import tasks.Epic;
+import tasks.Subtask;
+import tasks.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,10 +11,12 @@ import java.util.Map;
 
 public class TaskManager {
 
-    private Map<Integer, Task> tasks = new HashMap<>();
+    private Map<Integer, Task> tasks = new HashMap<>(); // На мой вгляд с одной мапой работать быстрее чем с тремя.
+    //Кол-во кода, как по мне, меньше - проще пройтись по одной мапе в методах getTaskById и removeTaskById, например.
     private int idCounter = 0;
 
-    int generateNewId(Task task) {
+    int generateNewId(Task task) {//В методе createNewTask спользуется данный метод с принимаемым параметром, строчка 48
+        // Соответственно данный метод генерит id для поступившей новой задачи.
         return ++idCounter;
     }
 
@@ -47,7 +49,8 @@ public class TaskManager {
             tasks.put(subtask.getId(), subtask);
 
             Epic epic = (Epic) tasks.get(epicId);
-            final List<Integer> subtasksIds = epic.getSubtasksIds();
+            final List<Integer> subtasksIds = epic.getSubtasksIds(); // В ТЗ указано реализовать все методы
+            // взаимодействия с тасками и мапами в таск менеджере. Для чего добавлять метод в класс эпик?
             subtasksIds.add(subtask.getId());
             updateEpicStatus(epic);
             return subtask.getId();
@@ -117,13 +120,14 @@ public class TaskManager {
         } else if (task.getTaskType().equals("epic")) {
             Epic epic = (Epic) task;
             if (!epic.getSubtasksIds().isEmpty()) {
-                System.out.println("Ошибка!!! Нельзя удалить эпик с подзадачами");
-            } else {
-                tasks.remove(id);
+                List<Integer> subtasksOfEpic = epic.getSubtasksIds();
+                for (Integer i : subtasksOfEpic) {
+                    tasks.remove(i);
+                }
             }
-        } else {
-            tasks.remove(id);
         }
+        tasks.remove(id);
+
     }
 
     void clearAllTasks() {
@@ -150,7 +154,7 @@ public class TaskManager {
         }
     }
 
-   public List<Subtask> getAllSubtasksOfEpicByEpicId(int id) {
+    public List<Subtask> getAllSubtasksOfEpicByEpicId(int id) {
         Task task = tasks.get(id);
         if (!task.getTaskType().equals("epic")) {
             System.out.println("Ошибка!!! Нельзя получить список подзадач по id задачи или подзадачи");

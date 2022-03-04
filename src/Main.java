@@ -1,5 +1,5 @@
-import Managers.TaskManager;
-import Tasks.*;
+import managers.TaskManager;
+import tasks.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +23,12 @@ public class Main {
         Subtask subTask1 = new Subtask("Подзадача №1 первого эпика", "текст", "new");
         subTask1.setEpicId(epicId);
         int subTask1Id = taskManager.createNewTask(subTask1);
+        epic1.addSubtaskIds(subTask1);
 
         Subtask subTask2 = new Subtask("Подзадача №2 первого эпика", "текст", "new");
         subTask2.setEpicId(epicId);
         int subTask2Id = taskManager.createNewTask(subTask2);
+        epic1.addSubtaskIds(subTask2);
 
         List<Integer> epics2Subtasks = new ArrayList<>();
         Epic epic2 = new Epic("Эпик 2", "текст", epics2Subtasks);
