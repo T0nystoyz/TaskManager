@@ -5,7 +5,7 @@ import utils.LimitedQueue;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    public static LimitedQueue<Task> historyList = new LimitedQueue<>(6); // выбираем любой размер листа
+    public LimitedQueue<Task> historyList = new LimitedQueue<>(6); // выбираем любой размер листа
 
     @Override
     public void add(Task task) {

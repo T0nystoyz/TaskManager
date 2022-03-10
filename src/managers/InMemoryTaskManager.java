@@ -13,8 +13,8 @@ import static tasks.Status.*;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
-    private Map<Integer, Task> tasks = new HashMap<>();
+    private final HistoryManager historyManager = new InMemoryHistoryManager();
+    private final Map<Integer, Task> tasks = new HashMap<>();
     private int idCounter = 0;
 
     @Override
@@ -190,11 +190,8 @@ public class InMemoryTaskManager implements TaskManager {
         return typedTasks;
     }
 
-
-
-    /*@Override
+    @Override
     public List<Task> history() {
-        return null;
-    }*/
-
+        return historyManager.getHistory();
+    }
 }

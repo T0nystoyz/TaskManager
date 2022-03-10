@@ -29,5 +29,5 @@ public interface TaskManager {
 
     List<Task> showAllTasksByType(String type);
 
-    //List<Task> history();
+    List<Task> history();
 }
