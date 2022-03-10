@@ -7,7 +7,7 @@ public class Epic extends Task {
     private List<Integer> subtasksIds;
 
     public Epic(String name, String description, List<Integer> subtasksIds) {
-        super(name, description, "new");
+        super(name, description, Status.NEW);
         this.subtasksIds = subtasksIds;
     }
 
@@ -25,4 +25,7 @@ public class Epic extends Task {
     }
 
 
+    public void addSubtaskIds(Subtask subtask) {
+        subtasksIds.add(subtask.getId());
+    }
 }
