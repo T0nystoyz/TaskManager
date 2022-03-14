@@ -13,7 +13,7 @@ import static tasks.Status.*;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    private final HistoryManager historyManager = new InMemoryHistoryManager();
+    public final HistoryManager historyManager = new InMemoryHistoryManager();
     private final Map<Integer, Task> tasks = new HashMap<>();
     private int idCounter = 0;
 
@@ -135,6 +135,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
         tasks.remove(id);
+        historyManager.remove(id);
 
     }
 

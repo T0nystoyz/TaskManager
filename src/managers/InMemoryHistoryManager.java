@@ -8,6 +8,7 @@ import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
+
     public static class TasksNode<T> {
         private Node<T> head;
         private Node<T> tail;
