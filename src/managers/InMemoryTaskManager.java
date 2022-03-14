@@ -13,9 +13,13 @@ import static tasks.Status.*;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    public final HistoryManager historyManager = new InMemoryHistoryManager();
+    public final HistoryManager historyManager;
     private final Map<Integer, Task> tasks = new HashMap<>();
     private int idCounter = 0;
+
+    public InMemoryTaskManager(HistoryManager historyManager) {
+        this.historyManager = historyManager;
+    }
 
     @Override
     public int generateNewId() {

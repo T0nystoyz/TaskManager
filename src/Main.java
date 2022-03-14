@@ -9,8 +9,9 @@ import static tasks.Status.*;
 
 public class Main {
     public static void main(String[] args) {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
+
         InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
+        InMemoryTaskManager taskManager = new InMemoryTaskManager(historyManager);
 
         Task task = new Task("Задача 1", "Просто текст", NEW);
         int task1Id = taskManager.createNewTask(task);
