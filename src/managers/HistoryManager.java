@@ -1,11 +1,12 @@
 package managers;
 
 import tasks.Task;
-import utils.LimitedQueue;
+
+import java.util.List;
 
 public interface HistoryManager {
 
     void add(Task task);
-
-    LimitedQueue<Task> getHistory();
+    void remove(int id);
+    List<Task> getHistory();
 }
