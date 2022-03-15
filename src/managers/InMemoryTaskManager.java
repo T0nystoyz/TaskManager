@@ -13,13 +13,15 @@ import static tasks.Status.*;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    public final HistoryManager historyManager;
+    public HistoryManager historyManager;
     private final Map<Integer, Task> tasks = new HashMap<>();
     private int idCounter = 0;
 
-    public InMemoryTaskManager(HistoryManager historyManager) {
+/*    public InMemoryTaskManager(InMemoryHistoryManager historyManager) {
         this.historyManager = historyManager;
     }
+*/
+
 
     @Override
     public int generateNewId() {
@@ -135,6 +137,7 @@ public class InMemoryTaskManager implements TaskManager {
                 List<Integer> subtasksOfEpic = epic.getSubtasksIds();
                 for (Integer i : subtasksOfEpic) {
                     tasks.remove(i);
+                    historyManager.remove(i);
                 }
             }
         }
@@ -152,18 +155,22 @@ public class InMemoryTaskManager implements TaskManager {
     public void clearTasksByType(String type) {
         ArrayList<Task> allTasks = new ArrayList<>(tasks.values());
         for (Task listedTasks : allTasks) {
-            if (type.equals("subtask") && listedTasks.getTaskType().equals("subtask")) {
-                tasks.remove(listedTasks.getId());
-            } else if (type.equals("epic") && listedTasks.getTaskType().equals("epic")) {
-                Epic epic = (Epic) listedTasks;
-                if (!epic.getSubtasksIds().isEmpty()) {
-                    System.out.println("Ошибка!!! Нельзя удалить эпик с подзадачами");
-                    return;
-                } else {
+            if (listedTasks.getTaskType().equals(type)) {
+                if (type.equals("subtask") && listedTasks.getTaskType().equals("subtask")) {
+                    tasks.remove(listedTasks.getId());
+                } else if (type.equals("epic") && listedTasks.getTaskType().equals("epic")) {
+                    Epic epic = (Epic) listedTasks;
+                    if (!epic.getSubtasksIds().isEmpty()) {
+                        System.out.println("Ошибка!!! Нельзя удалить эпик с подзадачами");
+                        return;
+                    } else {
+                        tasks.remove(listedTasks.getId());
+                    }
+                } else if (type.equals("task") && listedTasks.getTaskType().equals("task")) {
                     tasks.remove(listedTasks.getId());
                 }
-            } else if (type.equals("task") && listedTasks.getTaskType().equals("task")) {
-                tasks.remove(listedTasks.getId());
+            } else {
+                System.out.println("Задач с таким типом нет!");
             }
         }
     }

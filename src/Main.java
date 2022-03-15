@@ -10,8 +10,8 @@ import static tasks.Status.*;
 public class Main {
     public static void main(String[] args) {
 
-        InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
-        InMemoryTaskManager taskManager = new InMemoryTaskManager(historyManager);
+        //InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
 
         Task task = new Task("Задача 1", "Просто текст", NEW);
         int task1Id = taskManager.createNewTask(task);
@@ -74,7 +74,7 @@ public class Main {
         taskManager.getTaskById(4);
         taskManager.getTaskById(1);
         System.out.println(taskManager.showAllTasksByType("epic"));
-        System.out.println(historyManager.getHistory());
+        System.out.println(taskManager.history());
 
 
     }
