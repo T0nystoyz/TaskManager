@@ -10,7 +10,7 @@ import static tasks.Status.*;
 public class Main {
     public static void main(String[] args) {
 
-        //InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
+        InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
         InMemoryTaskManager taskManager = new InMemoryTaskManager();
 
         Task task = new Task("Задача 1", "Просто текст", NEW);
@@ -51,9 +51,7 @@ public class Main {
 
         System.out.println(task);
         System.out.println(updatedTask);
-        //taskManager.removeTaskById(task.getId());
         System.out.println(task2);
-        //taskManager.clearTasksByType("task");
         taskManager.showAllTasksByType("epic");
         System.out.println(epic1);
         System.out.println(subTask1);
@@ -69,12 +67,8 @@ public class Main {
         taskManager.getTaskById(1);
         taskManager.getTaskById(2);
         taskManager.getTaskById(3);
-        taskManager.getTaskById(4);
-        taskManager.getTaskById(4);
-        taskManager.getTaskById(4);
         taskManager.getTaskById(1);
-        System.out.println(taskManager.showAllTasksByType("epic"));
-        System.out.println(taskManager.history());
+        System.out.println(historyManager.getHistory());
 
 
     }

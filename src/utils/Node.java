@@ -16,10 +16,6 @@ public class Node<T> {
         return task;
     }
 
-    public void setTask(T task) {
-        this.task = task;
-    }
-
     public Node<T> getPrev() {
         return prev;
     }

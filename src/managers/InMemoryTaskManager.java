@@ -1,6 +1,7 @@
 package managers;
 
 import tasks.Epic;
+import tasks.Status;
 import tasks.Subtask;
 import tasks.Task;
 
@@ -13,15 +14,9 @@ import static tasks.Status.*;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    public HistoryManager historyManager;
+    public InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
     private final Map<Integer, Task> tasks = new HashMap<>();
     private int idCounter = 0;
-
-/*    public InMemoryTaskManager(InMemoryHistoryManager historyManager) {
-        this.historyManager = historyManager;
-    }
-*/
-
 
     @Override
     public int generateNewId() {
@@ -75,11 +70,11 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateEpicStatus(Epic epic) {
         final List<Subtask> subtasks = getAllSubtasksOfEpicByEpicId(epic.getId());
-        Map<String, Integer> statusCounter = new HashMap<>();
+        Map<Status, Integer> statusCounter = new HashMap<>();
         int allSubtasksCount = 0;
         for (Subtask subtask : subtasks) {
             Integer statusCount = statusCounter.getOrDefault(subtask.getStatus(), 0);
-            statusCounter.put(String.valueOf(subtask.getStatus()), statusCount + 1);
+            statusCounter.put(Status.valueOf(String.valueOf(subtask.getStatus())), statusCount + 1);
             allSubtasksCount += 1;
         }
         if (allSubtasksCount == 0 || statusCounter.getOrDefault(NEW, 0) == allSubtasksCount) {
