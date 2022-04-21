@@ -8,6 +8,12 @@ public class Task {
     private String description;
     private Status status;
 
+    public Task(String name, String description, Status status) {
+        this.name = name;
+        this.description = description;
+        this.status = status;
+    }
+
     public Task(Integer id, String name, String description, Status status) {
         this.id = id;
         this.name = name;
@@ -15,10 +21,10 @@ public class Task {
         this.status = status;
     }
 
-    public Task(String name, String description, Status status) {
+    public Task(Integer id, String name, String description) {
+        this.id = id;
         this.name = name;
         this.description = description;
-        this.status = status;
     }
 
     public Integer getId() {
@@ -76,11 +82,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Tasks.Task{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", status='" + status + '\'' +
-                '}';
+        return getId() + "," + getTaskType() + "," + getName() + "," + getStatus() + "," + getDescription();
     }
 }

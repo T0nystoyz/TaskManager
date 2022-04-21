@@ -13,6 +13,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     private static final MyLinkedList history = new MyLinkedList();
     private final Map<Integer, Node<Task>> nodesWithId = history.getNodesWithId();
+    private final List<Task> list = history.getTasks();
 
     @Override
     public void add(Task task) {
@@ -23,7 +24,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             history.linkLast(task);
         } else {
             history.linkLast(task);
-            //nodesWithId.put(task.getId(), node);
         }
     }
 
@@ -40,6 +40,16 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public List<Task> getHistory() {
         return history.getTasks();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        //List<Integer> ids = new ArrayList<>();
+        for (Task task : history.getTasks()) {
+            stringBuilder.append(task.getId());
+        }
+        return stringBuilder.toString();
     }
 
     public static class MyLinkedList {

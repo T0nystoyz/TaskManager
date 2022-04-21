@@ -12,6 +12,11 @@ public class Subtask extends Task {
         super(name, description, status);
     }
 
+    public Subtask(Integer id, String name, Status status, String description,  int epicId) {
+        super(id, name, description, status);
+        this.epicId = epicId;
+    }
+
     public int getEpicId() {
         return epicId;
     }
@@ -23,5 +28,11 @@ public class Subtask extends Task {
     @Override
     public String getTaskType() {
         return "subtask";
+    }
+
+    @Override
+    public String toString() {
+        return getId() + "," + getTaskType() + "," + getName() + "," + getStatus() + "," + getDescription()
+                + "," + getEpicId();
     }
 }

@@ -14,9 +14,23 @@ import static tasks.Status.*;
 
 public class InMemoryTaskManager implements TaskManager {
 
+    public InMemoryTaskManager() {
+    }
+
     public InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
-    private final Map<Integer, Task> tasks = new HashMap<>();
+    protected static Map<Integer, Task> tasks = new HashMap<>();
     private int idCounter = 0;
+
+    public InMemoryTaskManager(InMemoryHistoryManager historyManager, int idCounter) {
+        this.historyManager = historyManager;
+        this.idCounter = idCounter;
+        //this.tasks = tasks;
+    }
+
+    public void setTasks(Map<Integer, Task> tasks) {
+        InMemoryTaskManager.tasks = tasks;
+    }
+
 
     @Override
     public int generateNewId() {
