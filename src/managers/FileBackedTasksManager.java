@@ -4,34 +4,36 @@ import tasks.Epic;
 import tasks.Status;
 import tasks.Subtask;
 import tasks.Task;
+import utils.ManagerSaveException;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import static tasks.Status.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
-    static File file;
 
+    private File file = new File("C:\\Users\\Admin\\IdeaProjects\\java-sprint2-hw\\src\\file.csv");
 
     public FileBackedTasksManager(File file) {
-        FileBackedTasksManager.file = file;
+        setFile(file);
     }
 
     public FileBackedTasksManager() {
     }
 
-
-    private static Task extractTask(String line) {
-        Task task = null;
+    private static void extractTask(String line) {
+        Task task;
         String[] lin = line.split(",");
 
         if (lin.length != 5 && lin.length != 6) {
-            return null;
+            return;
         }
 
         switch (lin[1]) {
@@ -59,10 +61,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 tasks.put(task.getId(), task);
                 break;
         }
-        return task;
     }
 
-    static FileBackedTasksManager loadFromCsv(File file) {
+    static FileBackedTasksManager loadFromFile(File file) {
         FileBackedTasksManager taskManager = new FileBackedTasksManager();
         List<String> lines;
         try {
@@ -76,17 +77,21 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         return taskManager;
     }
 
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
     @Override
     public int createNewTask(Task task) {
-        try {
-            saveTask();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        saveTask();
         return super.createNewTask(task);
     }
 
-    private void saveTask() throws IOException {
+    private void saveTask() {
         try (Writer writer = new FileWriter(file)) {
 
             for (Task task : showAllTasksByType("task")) {
@@ -103,82 +108,66 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 writer.write(task.toString());
                 writer.write("\n");
             }
+        } catch (IOException e) {
+            try {
+                throw new ManagerSaveException("Неудачная попытка автосохранения");
+            } catch (ManagerSaveException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
-    public void saveHistory(InMemoryHistoryManager hm) throws IOException {
+    public void saveHistory(InMemoryHistoryManager hm) {
         String history = hm.toString();
         try (Writer writer = new FileWriter(file, true)) {
             writer.write("\n");
             writer.write(history);
+        } catch (IOException e) {
+            try {
+                throw new ManagerSaveException("Неудачная попытка автосохранения");
+            } catch (ManagerSaveException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
     @Override
     public void updateEpicStatus(Epic epic) {
         super.updateEpicStatus(epic);
-        try {
-            saveTask();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        saveTask();
     }
 
     @Override
     public void updateTask(Task task) {
         super.updateTask(task);
-        try {
-            saveTask();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        saveTask();
     }
 
     @Override
     public void removeTaskById(int id) {
         super.removeTaskById(id);
-        try {
-            saveTask();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        saveTask();
     }
 
     @Override
     public void clearAllTasks() {
         super.clearAllTasks();
-        try {
-            saveTask();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        saveTask();
     }
 
     @Override
     public void clearTasksByType(String type) {
         super.clearTasksByType(type);
-        try {
-            saveTask();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        saveTask();
     }
 
     public static class Main {
         public static void main(String[] args) {
 
-            File file = new File("C://Users/Admin/IdeaProjects/java-sprint2-hw/src", "file.csv");
             InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
+            FileBackedTasksManager fb = new FileBackedTasksManager();
 
-            FileBackedTasksManager fb = FileBackedTasksManager.loadFromCsv(new File("C:\\Users\\Admin\\IdeaProjects\\java-sprint2-hw\\src\\file.csv"));
-
-            System.out.println(fb.getTaskById(1));
-            System.out.println(fb.getTaskById(2));
-            System.out.println(fb.getTaskById(3));
-            System.out.println(fb.getTaskById(1));
-            System.out.println(historyManager);
-
-            /*Task task = new Task("Задача 1", "Просто текст", NEW);
+            Task task = new Task("Задача 1", "Просто текст", NEW);
             int task1Id = fb.createNewTask(task);
             Task updatedTask = new Task(task1Id, "Задача 1", "Просто текст", IN_PROGRESS);
             fb.updateTask(updatedTask);
@@ -218,11 +207,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             fb.getTaskById(3);
             fb.getTaskById(4);
             fb.getTaskById(2);
-            try {
-                fb.saveHistory(historyManager);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
+            fb.saveHistory(historyManager);
+
+
+            FileBackedTasksManager fbSaved = FileBackedTasksManager.loadFromFile(fb.getFile());
+            System.out.println(fbSaved.getTaskById(1));
+            System.out.println(fbSaved.getTaskById(2));
+            System.out.println(fbSaved.getTaskById(3));
+            System.out.println(fbSaved.getTaskById(1));
+            System.out.println(historyManager);
         }
     }
 }
