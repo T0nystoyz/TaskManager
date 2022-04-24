@@ -19,7 +19,7 @@ import static tasks.Status.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
 
-    private File file = new File("C:\\Users\\Admin\\IdeaProjects\\java-sprint2-hw\\src\\file.csv");
+    private File file = new File("./src/file.csv");
 
     public FileBackedTasksManager(File file) {
         setFile(file);
@@ -87,11 +87,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     @Override
     public int createNewTask(Task task) {
-        saveTask();
+        try {
+            saveTask();
+        } catch (ManagerSaveException e) {
+            System.out.println("Неудачная попытка сохранения");
+        }
         return super.createNewTask(task);
     }
 
-    private void saveTask() {
+    private void saveTask() throws ManagerSaveException {
         try (Writer writer = new FileWriter(file)) {
 
             for (Task task : showAllTasksByType("task")) {
@@ -108,12 +112,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 writer.write(task.toString());
                 writer.write("\n");
             }
-        } catch (IOException e) {
-            try {
-                throw new ManagerSaveException("Неудачная попытка автосохранения");
-            } catch (ManagerSaveException ex) {
-                ex.printStackTrace();
-            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -134,31 +134,51 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     @Override
     public void updateEpicStatus(Epic epic) {
         super.updateEpicStatus(epic);
-        saveTask();
+        try {
+            saveTask();
+        } catch (ManagerSaveException e) {
+            System.out.println("Неудачная попытка сохранения");
+        }
     }
 
     @Override
     public void updateTask(Task task) {
         super.updateTask(task);
-        saveTask();
+        try {
+            saveTask();
+        } catch (ManagerSaveException e) {
+            System.out.println("Неудачная попытка сохранения");
+        }
     }
 
     @Override
     public void removeTaskById(int id) {
         super.removeTaskById(id);
-        saveTask();
+        try {
+            saveTask();
+        } catch (ManagerSaveException e) {
+            System.out.println("Неудачная попытка сохранения");
+        }
     }
 
     @Override
     public void clearAllTasks() {
         super.clearAllTasks();
-        saveTask();
+        try {
+            saveTask();
+        } catch (ManagerSaveException e) {
+            System.out.println("Неудачная попытка сохранения");
+        }
     }
 
     @Override
     public void clearTasksByType(String type) {
         super.clearTasksByType(type);
-        saveTask();
+        try {
+            saveTask();
+        } catch (ManagerSaveException e) {
+            System.out.println("Неудачная попытка сохранения");
+        }
     }
 
     public static class Main {
@@ -208,7 +228,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             fb.getTaskById(4);
             fb.getTaskById(2);
             fb.saveHistory(historyManager);
-
 
             FileBackedTasksManager fbSaved = FileBackedTasksManager.loadFromFile(fb.getFile());
             System.out.println(fbSaved.getTaskById(1));
