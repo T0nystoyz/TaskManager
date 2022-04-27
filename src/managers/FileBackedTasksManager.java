@@ -72,7 +72,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 extractTask(line);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ManagerSaveException("Неудачная попытка загрузки");
         }
         return taskManager;
     }
@@ -87,15 +87,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     @Override
     public int createNewTask(Task task) {
-        try {
-            saveTask();
-        } catch (ManagerSaveException e) {
-            System.out.println("Неудачная попытка сохранения");
-        }
+        saveTask();
         return super.createNewTask(task);
     }
 
-    private void saveTask() throws ManagerSaveException {
+    private void saveTask() {
         try (Writer writer = new FileWriter(file)) {
 
             for (Task task : showAllTasksByType("task")) {
@@ -113,7 +109,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 writer.write("\n");
             }
         } catch (IOException ex) {
-            ex.printStackTrace();
+            throw new ManagerSaveException("Неудачная попытка сохранения");
         }
     }
 
@@ -123,62 +119,38 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             writer.write("\n");
             writer.write(history);
         } catch (IOException e) {
-            try {
-                throw new ManagerSaveException("Неудачная попытка автосохранения");
-            } catch (ManagerSaveException ex) {
-                ex.printStackTrace();
-            }
+            throw new ManagerSaveException("Неудачная попытка автосохранения");
         }
     }
 
     @Override
     public void updateEpicStatus(Epic epic) {
         super.updateEpicStatus(epic);
-        try {
-            saveTask();
-        } catch (ManagerSaveException e) {
-            System.out.println("Неудачная попытка сохранения");
-        }
+        saveTask();
     }
 
     @Override
     public void updateTask(Task task) {
         super.updateTask(task);
-        try {
-            saveTask();
-        } catch (ManagerSaveException e) {
-            System.out.println("Неудачная попытка сохранения");
-        }
+        saveTask();
     }
 
     @Override
     public void removeTaskById(int id) {
         super.removeTaskById(id);
-        try {
-            saveTask();
-        } catch (ManagerSaveException e) {
-            System.out.println("Неудачная попытка сохранения");
-        }
+        saveTask();
     }
 
     @Override
     public void clearAllTasks() {
         super.clearAllTasks();
-        try {
-            saveTask();
-        } catch (ManagerSaveException e) {
-            System.out.println("Неудачная попытка сохранения");
-        }
+        saveTask();
     }
 
     @Override
     public void clearTasksByType(String type) {
         super.clearTasksByType(type);
-        try {
-            saveTask();
-        } catch (ManagerSaveException e) {
-            System.out.println("Неудачная попытка сохранения");
-        }
+        saveTask();
     }
 
     public static class Main {
