@@ -1,6 +1,5 @@
 package managers;
 
-
 import tasks.Task;
 import utils.Node;
 
@@ -8,12 +7,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
     private static final MyLinkedList history = new MyLinkedList();
     private final Map<Integer, Node<Task>> nodesWithId = history.getNodesWithId();
-    private final List<Task> list = history.getTasks();
 
     @Override
     public void add(Task task) {
@@ -37,6 +36,10 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     }
 
+    void clearHistory() {
+        history.clear();
+    }
+
     @Override
     public List<Task> getHistory() {
         return history.getTasks();
@@ -44,12 +47,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        //List<Integer> ids = new ArrayList<>();
-        for (Task task : history.getTasks()) {
-            stringBuilder.append(task.getId());
-        }
-        return stringBuilder.toString();
+        return history.getTasks().stream().map(task -> String.valueOf(task.getId())).collect(Collectors.joining());
     }
 
     public static class MyLinkedList {
@@ -93,6 +91,10 @@ public class InMemoryHistoryManager implements HistoryManager {
             } else {
                 tail = prev;
             }
+        }
+
+        void clear() {
+            head = null;
         }
 
         public Map<Integer, Node<Task>> getNodesWithId() {

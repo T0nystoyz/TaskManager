@@ -19,11 +19,7 @@ import static tasks.Status.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
 
-    private File file = new File("./src/file.csv");
-
-    public FileBackedTasksManager(File file) {
-        setFile(file);
-    }
+    private final File file = new File("./src/file.csv");
 
     public FileBackedTasksManager() {
     }
@@ -48,8 +44,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             case ("subtask"):
                 task = new Subtask(Integer.parseInt(lin[0]),
                         lin[2],
-                        Status.valueOf(lin[3]),
-                        lin[4],
+                        lin[3],
+                        Status.valueOf(lin[4]),
                         Integer.parseInt(lin[5]));
                 tasks.put(task.getId(), task);
                 break;
@@ -63,7 +59,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         }
     }
 
-    static FileBackedTasksManager loadFromFile(File file) {
+    public static FileBackedTasksManager loadFromFile(File file) {
         FileBackedTasksManager taskManager = new FileBackedTasksManager();
         List<String> lines;
         try {
@@ -72,7 +68,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 extractTask(line);
             }
         } catch (IOException e) {
-            throw new ManagerSaveException("Неудачная попытка загрузки");
+            System.out.println("Неудачная попытка загрузки данных, загружен пустой менеджер");
+            return taskManager;
         }
         return taskManager;
     }
@@ -81,17 +78,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         return file;
     }
 
-    public void setFile(File file) {
-        this.file = file;
-    }
-
     @Override
     public int createNewTask(Task task) {
         saveTask();
         return super.createNewTask(task);
     }
 
-    private void saveTask() {
+    public void saveTask() {
         try (Writer writer = new FileWriter(file)) {
 
             for (Task task : showAllTasksByType("task")) {
@@ -110,6 +103,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             }
         } catch (IOException ex) {
             throw new ManagerSaveException("Неудачная попытка сохранения");
+
         }
     }
 
@@ -119,8 +113,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             writer.write("\n");
             writer.write(history);
         } catch (IOException e) {
-            throw new ManagerSaveException("Неудачная попытка автосохранения");
+            throw new ManagerSaveException("Неудачная попытка сохранения");
         }
+    }
+
+    @Override
+    public void clearHistory() {
+        super.clearHistory();
+        saveTask();
     }
 
     @Override
@@ -153,9 +153,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         saveTask();
     }
 
+    @Override
+    public void calculateEpicsTime(Epic epic) {
+        super.calculateEpicsTime(epic);
+        saveTask();
+    }
+
     public static class Main {
         public static void main(String[] args) {
-
             InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
             FileBackedTasksManager fb = new FileBackedTasksManager();
 
@@ -165,21 +170,23 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             fb.updateTask(updatedTask);
 
             Task task2 = new Task("Задача 2", "Просто текст", NEW);
-            int task2Id = fb.createNewTask(task2);
+            fb.createNewTask(task2);
 
             List<Integer> epics1Subtasks = new ArrayList<>();
             Epic epic1 = new Epic("Эпик 1", "текст", epics1Subtasks);
             int epicId = fb.createNewTask(epic1);
 
+
             Subtask subTask1 = new Subtask("Подзадача №1 первого эпика", "текст", NEW);
             subTask1.setEpicId(epicId);
-            int subTask1Id = fb.createNewTask(subTask1);
+            fb.createNewTask(subTask1);
             epic1.addSubtaskIds(subTask1);
 
             Subtask subTask2 = new Subtask("Подзадача №2 первого эпика", "текст", NEW);
             subTask2.setEpicId(epicId);
-            int subTask2Id = fb.createNewTask(subTask2);
+            fb.createNewTask(subTask2);
             epic1.addSubtaskIds(subTask2);
+            fb.calculateEpicsTime(epic1);
 
             List<Integer> epics2Subtasks = new ArrayList<>();
             Epic epic2 = new Epic("Эпик 2", "текст", epics2Subtasks);
@@ -188,6 +195,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             Subtask subTask3 = new Subtask("Подзадача второго эпика", "текст", NEW);
             subTask3.setEpicId(epic2Id);
             int subTask3Id = fb.createNewTask(subTask3);
+            fb.calculateEpicsTime(epic2);
 
             Subtask updatedSubTask3 = new Subtask(subTask3Id, "Завершенная подзадача второго эпика", "текст", DONE);
             updatedSubTask3.setEpicId(epic2Id);

@@ -1,11 +1,9 @@
 package managers;
 
-import tasks.Epic;
-import tasks.Subtask;
-import tasks.Task;
+import tasks.*;
+
 
 import java.util.List;
-
 
 public interface TaskManager {
 
@@ -14,6 +12,8 @@ public interface TaskManager {
     Task getTaskById(int id);
 
     int createNewTask(Task task);
+
+    void clearHistory();
 
     void updateEpicStatus(Epic epic);
 
@@ -28,6 +28,8 @@ public interface TaskManager {
     List<Subtask> getAllSubtasksOfEpicByEpicId(int id);
 
     List<Task> showAllTasksByType(String type);
+
+    void calculateEpicsTime(Epic epic);
 
     List<Task> history();
 }
