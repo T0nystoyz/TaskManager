@@ -18,13 +18,17 @@ public class InMemoryTaskManager implements TaskManager, Serializable {
             new TreeSet<>(Comparator.comparing(Task::getStartTime));
     protected static TreeSet<Task> sortedTasksByType =
             new TreeSet<>(Comparator.comparing(Task::getTaskType).thenComparing(Task::getId));
-    public InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
+    private final InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
     private int idCounter = 0;
     public InMemoryTaskManager() {
     }
 
     public static Map<Integer, Task> getTasks() {
         return tasks;
+    }
+
+    public InMemoryHistoryManager getHistoryManager() {
+        return historyManager;
     }
 
     /**
@@ -105,6 +109,7 @@ public class InMemoryTaskManager implements TaskManager, Serializable {
             final List<Integer> subtasksIds = epic.getSubtasksIds();
             subtasksIds.add(subtask.getId());
             updateEpicStatus(epic);
+            calculateEpicsTime(epic);
             return subtask.getId();
         } else {
             task.setId(generateNewId());
@@ -171,7 +176,6 @@ public class InMemoryTaskManager implements TaskManager, Serializable {
         if (!tasks.containsKey(id)) {
             throw new IllegalArgumentException("Ошибка!!! Передана несуществующая задача");
         }
-
         Task task = tasks.get(id);
         if (task.getTaskType().equals("subtask")) {
             Subtask subtask = (Subtask) task;
@@ -241,6 +245,7 @@ public class InMemoryTaskManager implements TaskManager, Serializable {
         return subtasks;
     }
 
+    @Override
     public List<Task> getAllTasks() {
         return new ArrayList<>(tasks.values());
     }
@@ -278,12 +283,10 @@ public class InMemoryTaskManager implements TaskManager, Serializable {
                 int durationEpicTask = (int) duration.toMinutes();
                 epic.setStartTime(epicsSubtasksWithTime.first().getStartTime());
                 epic.setDuration(Duration.ofMinutes(durationEpicTask));
-                epic.setEndTime(epicsSubtasksWithTime.last().getEndTime());
             }
         } else {
             epic.setStartTime(null);
             epic.setDuration(Duration.ofMinutes(0));
-            epic.setEndTime(null);
         }
     }
 }

@@ -1,7 +1,6 @@
 package taskManagers;
 
 import managers.FileBackedTasksManager;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tasks.Epic;
@@ -11,13 +10,11 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class FileBackedTasksManagerTest extends InMemoryTaskManagerTest {
-    private final FileBackedTasksManager fb = new FileBackedTasksManager();
+class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
 
-    @AfterEach
-    void clear() {
-        fb.clearAllTasks();
-        fb.clearHistory();
+    @Override
+    protected void setManager() {
+        this.taskManager = new FileBackedTasksManager();
     }
 
     @DisplayName ("GIVEN an instance of empty manager " +
@@ -34,7 +31,7 @@ class FileBackedTasksManagerTest extends InMemoryTaskManagerTest {
             "THEN return manager with empty epic")
     @Test
     public void test2_loadTaskManagerWithEmptyEpic() {
-        fb.createNewTask(new Epic("Эпик", "Просто текст", new ArrayList<>()));
+        taskManager.createNewTask(new Epic("Эпик", "Просто текст", new ArrayList<>()));
         FileBackedTasksManager loaded = FileBackedTasksManager.loadFromFile(new File("./src/file.csv"));
         Epic epic = (Epic) loaded.getTaskById(1);
         assertTrue(epic.getSubtasksIds().isEmpty());
@@ -45,8 +42,10 @@ class FileBackedTasksManagerTest extends InMemoryTaskManagerTest {
             "THEN return manager with empty history")
     @Test
     public void test3_loadTaskManagerWithEmptyHistory() {
-        fb.saveHistory(fb.historyManager);
+        taskManager.saveHistory(taskManager.getHistoryManager());
         FileBackedTasksManager loaded = FileBackedTasksManager.loadFromFile(new File("./src/file.csv"));
         assertTrue(loaded.history().isEmpty());
     }
+
+
 }

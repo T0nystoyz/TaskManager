@@ -27,6 +27,8 @@ public interface TaskManager {
 
     List<Subtask> getAllSubtasksOfEpicByEpicId(int id);
 
+    List<Task> getAllTasks();
+
     List<Task> showAllTasksByType(String type);
 
     void calculateEpicsTime(Epic epic);

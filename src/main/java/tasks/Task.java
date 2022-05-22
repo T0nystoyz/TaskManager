@@ -10,7 +10,6 @@ public class Task implements Serializable {
     private final String name;
     private final String description;
     private Status status;
-    private LocalDateTime endTime;
     private LocalDateTime startTime;
     private Duration duration;
 
@@ -43,10 +42,6 @@ public class Task implements Serializable {
 
     public LocalDateTime getEndTime() {
         return startTime.plus(duration);
-    }
-
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
     }
 
     public LocalDateTime getStartTime() {
@@ -112,23 +107,14 @@ public class Task implements Serializable {
 
     @Override
     public String toString() {
-        String result;
-        try {
-            String q = String.valueOf(getStartTime());
-            String w = String.valueOf(getEndTime());
-            result = getId() + "," + getTaskType() + "," + getName() +
+        if (getStartTime() == null || getEndTime() == null) {
+            return getId() + "," + getTaskType() + "," + getName() +
                     "," + getStatus() + "," + getDescription() + "," +
-                    q + "," + getDuration() + "," + w;
-        } catch (NullPointerException ex) {
-            String q = String.valueOf(getStartTime());
-            String w = "null";
-            result = getId() + "," + getTaskType() + "," + getName() +
+                    "null" + "," + getDuration() + "," + "null";
+        } else {
+            return getId() + "," + getTaskType() + "," + getName() +
                     "," + getStatus() + "," + getDescription() + "," +
-                    q + "," + getDuration() + "," + w;
+                    getStartTime() + "," + getDuration() + "," + getEndTime();
         }
-
-        return result;
-
     }
-
 }

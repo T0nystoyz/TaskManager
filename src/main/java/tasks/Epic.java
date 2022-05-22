@@ -1,7 +1,11 @@
 package tasks;
 
+import java.time.LocalDateTime;
 import java.util.List;
-public class Epic extends Task {
+
+public class Epic extends Task { //поля startTime и Duration высчитываются в менеджерах
+    // методом calculateEpicsTime(Epic epic) при создании, удалении и обновлении его подзадач.
+    // Метод getEndTime должен высчитывать как в супер классе, исходя из полей duration и startTime.
 
     private List<Integer> subtasksIds;
 
@@ -32,6 +36,10 @@ public class Epic extends Task {
         return "epic";
     }
 
+    @Override
+    public LocalDateTime getEndTime() {
+        return super.getEndTime();
+    }
 
     public void addSubtaskIds(Subtask subtask) {
         subtasksIds.add(subtask.getId());
@@ -39,22 +47,14 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        String result;
-        try {
-            String q = String.valueOf(getStartTime());
-            String w = String.valueOf(getEndTime());
-            result = getId() + "," + getTaskType() + "," + getName() +
+        if (getStartTime() == null || getEndTime() == null) {
+            return getId() + "," + getTaskType() + "," + getName() +
                     "," + getStatus() + "," + getDescription() + "," +
-                    q + "," + getDuration() + "," + w;
-        } catch (NullPointerException ex) {
-            String q = String.valueOf(getStartTime());
-            String w = "null";
-            result = getId() + "," + getTaskType() + "," + getName() +
+                    "null" + "," + getDuration() + "," + "null";
+        } else {
+            return getId() + "," + getTaskType() + "," + getName() +
                     "," + getStatus() + "," + getDescription() + "," +
-                    q + "," + getDuration() + "," + w;
+                    getStartTime() + "," + getDuration() + "," + getEndTime();
         }
-
-        return result;
-
     }
 }

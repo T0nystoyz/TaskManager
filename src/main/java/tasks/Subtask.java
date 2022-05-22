@@ -45,23 +45,14 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        String result;
-        try {
-            String q = String.valueOf(getStartTime());
-            String w = String.valueOf(getEndTime());
-            result = getId() + "," + getTaskType() + "," + getName() +
-                    "," + getStatus() + "," + getDescription() + "," + "," + getEpicId() +
-                    q + "," + getDuration() + "," + w;
-        } catch (NullPointerException ex) {
-            String q = String.valueOf(getStartTime());
-            String w = "null";
-            result = getId() + "," + getTaskType() + "," + getName() +
-                    "," + getStatus() + "," + getDescription() + "," + "," + getEpicId() +
-                    q + "," + getDuration() + "," + w;
+        if (getStartTime() == null || getEndTime() == null) {
+            return getId() + "," + getTaskType() + "," + getName() +
+                    "," + getStatus() + "," + getDescription() + "," + getEpicId() +
+                    "null" + "," + getDuration() + "," + "null";
+        } else {
+            return getId() + "," + getTaskType() + "," + getName() +
+                    "," + getStatus() + "," + getDescription() + "," + getEpicId() +
+                    getStartTime() + "," + getDuration() + "," + getEndTime();
         }
-
-        return result;
-
     }
-
 }

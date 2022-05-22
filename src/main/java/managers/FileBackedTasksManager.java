@@ -12,10 +12,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
-
-import static tasks.Status.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
 
@@ -72,10 +69,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             return taskManager;
         }
         return taskManager;
-    }
-
-    public File getFile() {
-        return file;
     }
 
     @Override
@@ -157,65 +150,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     public void calculateEpicsTime(Epic epic) {
         super.calculateEpicsTime(epic);
         saveTask();
-    }
-
-    public static class Main {
-        public static void main(String[] args) {
-            InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
-            FileBackedTasksManager fb = new FileBackedTasksManager();
-
-            Task task = new Task("Задача 1", "Просто текст", NEW);
-            int task1Id = fb.createNewTask(task);
-            Task updatedTask = new Task(task1Id, "Задача 1", "Просто текст", IN_PROGRESS);
-            fb.updateTask(updatedTask);
-
-            Task task2 = new Task("Задача 2", "Просто текст", NEW);
-            fb.createNewTask(task2);
-
-            List<Integer> epics1Subtasks = new ArrayList<>();
-            Epic epic1 = new Epic("Эпик 1", "текст", epics1Subtasks);
-            int epicId = fb.createNewTask(epic1);
-
-
-            Subtask subTask1 = new Subtask("Подзадача №1 первого эпика", "текст", NEW);
-            subTask1.setEpicId(epicId);
-            fb.createNewTask(subTask1);
-            epic1.addSubtaskIds(subTask1);
-
-            Subtask subTask2 = new Subtask("Подзадача №2 первого эпика", "текст", NEW);
-            subTask2.setEpicId(epicId);
-            fb.createNewTask(subTask2);
-            epic1.addSubtaskIds(subTask2);
-            fb.calculateEpicsTime(epic1);
-
-            List<Integer> epics2Subtasks = new ArrayList<>();
-            Epic epic2 = new Epic("Эпик 2", "текст", epics2Subtasks);
-            int epic2Id = fb.createNewTask(epic2);
-
-            Subtask subTask3 = new Subtask("Подзадача второго эпика", "текст", NEW);
-            subTask3.setEpicId(epic2Id);
-            int subTask3Id = fb.createNewTask(subTask3);
-            fb.calculateEpicsTime(epic2);
-
-            Subtask updatedSubTask3 = new Subtask(subTask3Id, "Завершенная подзадача второго эпика", "текст", DONE);
-            updatedSubTask3.setEpicId(epic2Id);
-            fb.updateTask(updatedSubTask3);
-
-            fb.updateEpicStatus(epic2);
-            fb.getTaskById(1);
-            fb.getTaskById(2);
-            fb.getTaskById(3);
-            fb.getTaskById(4);
-            fb.getTaskById(2);
-            fb.saveHistory(historyManager);
-
-            FileBackedTasksManager fbSaved = FileBackedTasksManager.loadFromFile(fb.getFile());
-            System.out.println(fbSaved.getTaskById(1));
-            System.out.println(fbSaved.getTaskById(2));
-            System.out.println(fbSaved.getTaskById(3));
-            System.out.println(fbSaved.getTaskById(1));
-            System.out.println(historyManager);
-        }
     }
 }
 

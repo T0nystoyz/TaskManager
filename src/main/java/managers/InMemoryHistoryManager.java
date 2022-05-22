@@ -36,7 +36,8 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     }
 
-    void clearHistory() {
+    @Override
+    public void clearHistory() {
         history.clear();
     }
 
@@ -95,6 +96,8 @@ public class InMemoryHistoryManager implements HistoryManager {
 
         void clear() {
             head = null;
+            tail = null;
+            nodesWithId.clear();
         }
 
         public Map<Integer, Node<Task>> getNodesWithId() {
