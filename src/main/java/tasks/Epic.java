@@ -1,11 +1,13 @@
 package tasks;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import managers.InMemoryTaskManager;
 
-public class Epic extends Task { //поля startTime и Duration высчитываются в менеджерах
-    // методом calculateEpicsTime(Epic epic) при создании, удалении и обновлении его подзадач.
-    // Метод getEndTime должен высчитывать как в супер классе, исходя из полей duration и startTime.
+import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
+import java.util.TreeSet;
+
+public class Epic extends Task {
 
     private List<Integer> subtasksIds;
 
@@ -38,7 +40,21 @@ public class Epic extends Task { //поля startTime и Duration высчиты
 
     @Override
     public LocalDateTime getEndTime() {
-        return super.getEndTime();
+        LocalDateTime endTime = null;
+        TreeSet<Task> epicsSubtasksWithTime = new TreeSet<>(Comparator.comparing(Task::getStartTime));
+        Subtask subtask;
+        if (!this.getSubtasksIds().isEmpty()) {
+            for (int id : this.getSubtasksIds()) {
+                subtask = (Subtask) InMemoryTaskManager.getTasks().get(id);
+                if (subtask.getStartTime() != null) {
+                    epicsSubtasksWithTime.add(subtask);
+                }
+            }
+            if (!epicsSubtasksWithTime.isEmpty()) {
+                endTime = epicsSubtasksWithTime.last().getEndTime();
+            }
+        }
+        return endTime;
     }
 
     public void addSubtaskIds(Subtask subtask) {
