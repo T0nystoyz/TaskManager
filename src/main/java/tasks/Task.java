@@ -6,9 +6,9 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task implements Serializable {
-    private Integer id;
     private final String name;
     private final String description;
+    private Integer id;
     private Status status;
     private LocalDateTime startTime;
     private Duration duration;

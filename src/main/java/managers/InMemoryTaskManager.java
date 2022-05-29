@@ -20,6 +20,7 @@ public class InMemoryTaskManager implements TaskManager, Serializable {
             new TreeSet<>(Comparator.comparing(Task::getTaskType).thenComparing(Task::getId));
     private final InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
     private int idCounter = 0;
+
     public InMemoryTaskManager() {
     }
 
@@ -172,7 +173,7 @@ public class InMemoryTaskManager implements TaskManager, Serializable {
     }
 
     @Override
-    public void removeTaskById(int id) {
+    public String removeTaskById(int id) {
         if (!tasks.containsKey(id)) {
             throw new IllegalArgumentException("Ошибка!!! Передана несуществующая задача");
         }
@@ -196,7 +197,7 @@ public class InMemoryTaskManager implements TaskManager, Serializable {
         }
         tasks.remove(id);
         historyManager.remove(id);
-
+        return "task has been removed";
     }
 
     @Override

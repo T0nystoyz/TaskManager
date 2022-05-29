@@ -73,11 +73,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     @Override
     public int createNewTask(Task task) {
-        saveTask();
+        save();
         return super.createNewTask(task);
     }
 
-    public void saveTask() {
+    public void save() {
         try (Writer writer = new FileWriter(file)) {
 
             for (Task task : showAllTasksByType("task")) {
@@ -113,43 +113,44 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     @Override
     public void clearHistory() {
         super.clearHistory();
-        saveTask();
+        save();
     }
 
     @Override
     public void updateEpicStatus(Epic epic) {
         super.updateEpicStatus(epic);
-        saveTask();
+        save();
     }
 
     @Override
     public void updateTask(Task task) {
         super.updateTask(task);
-        saveTask();
+        save();
     }
 
     @Override
-    public void removeTaskById(int id) {
+    public String removeTaskById(int id) {
         super.removeTaskById(id);
-        saveTask();
+        save();
+        return "task has been removed";
     }
 
     @Override
     public void clearAllTasks() {
         super.clearAllTasks();
-        saveTask();
+        save();
     }
 
     @Override
     public void clearTasksByType(String type) {
         super.clearTasksByType(type);
-        saveTask();
+        save();
     }
 
     @Override
     public void calculateEpicsTime(Epic epic) {
         super.calculateEpicsTime(epic);
-        saveTask();
+        save();
     }
 }
 

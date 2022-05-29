@@ -1,6 +1,8 @@
 # Compiled class file
 *.class
 
+src/main/java/practicum
+
 # Log file
 *.log
 

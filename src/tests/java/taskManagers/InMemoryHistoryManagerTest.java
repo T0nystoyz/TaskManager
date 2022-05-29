@@ -60,7 +60,7 @@ class InMemoryHistoryManagerTest {
         taskManager.getTaskById(task3Id);
         taskManager.getHistoryManager().remove(task1Id);
         assertEquals(2, taskManager.history().size());
-        assertEquals(2,taskManager.history().get(0).getId());
+        assertEquals(2, taskManager.history().get(0).getId());
     }
 
     @DisplayName ("GIVEN a new instance of history " +
