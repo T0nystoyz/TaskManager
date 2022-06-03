@@ -40,6 +40,15 @@ public class Task implements Serializable {
         this.duration = duration;
     }
 
+    public Task(Integer id, String name, String description, Status status, LocalDateTime startTime, Duration duration) {
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.startTime = startTime;
+        this.duration = duration;
+        this.id = id;
+    }
+
     public LocalDateTime getEndTime() {
         return startTime.plus(duration);
     }

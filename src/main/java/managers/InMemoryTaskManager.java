@@ -13,6 +13,10 @@ import static tasks.Status.*;
 
 public class InMemoryTaskManager implements TaskManager, Serializable {
 
+    public static void setTasks(Map<Integer, Task> tasks) {
+        InMemoryTaskManager.tasks = tasks;
+    }
+
     protected static Map<Integer, Task> tasks = new HashMap<>();
     protected static TreeSet<Task> sortedTasksByTime =
             new TreeSet<>(Comparator.comparing(Task::getStartTime));

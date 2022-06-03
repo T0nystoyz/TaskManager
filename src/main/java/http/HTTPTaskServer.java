@@ -8,7 +8,7 @@ import java.net.InetSocketAddress;
 import static http.HTTPEndpoints.*;
 
 public class HTTPTaskServer {
-    private static final int PORT = 8008;
+    private static final int PORT = 8080;
     private final HttpServer httpServer;
 
 

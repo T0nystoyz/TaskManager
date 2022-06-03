@@ -10,6 +10,7 @@ import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -27,10 +28,10 @@ abstract class TaskManagerTest<T extends TaskManager> {
             = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     protected T taskManager;
 
-    protected abstract void setManager();
+    protected abstract void setManager() throws IOException, InterruptedException;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException, InterruptedException {
         setManager();
     }
 
@@ -40,7 +41,9 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.clearHistory();
     }
 
-    @DisplayName ("GIVEN a new instance of Task " + "WHEN a new task created " + "THEN returned id counter++")
+    @DisplayName ("GIVEN a new instance of Task "
+            + "WHEN a new task created "
+            + "THEN returned id counter++")
     @Test
     void test1_generateNewIdShouldIncrementIdCounter() {
         Task task = new Task("Задача 1", "Просто текст", NEW);
@@ -48,7 +51,9 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(1, task.getId());
     }
 
-    @DisplayName ("GIVEN an instance of HashMap of tasks " + "WHEN calling Task by id " + "THEN returned Task with that id")
+    @DisplayName ("GIVEN an instance of HashMap of tasks "
+            + "WHEN calling Task by id "
+            + "THEN returned Task with that id")
     @Test
     void test2_getTaskByIdShouldReturnCorrespondingTaskById() {
         Task task = new Task("Задача 1", "Просто текст", NEW);
@@ -56,7 +61,9 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(task, taskManager.getTaskById(1));
     }
 
-    @DisplayName ("GIVEN an instance of HashMap of tasks " + "WHEN calling Task by non-existent id " + "THEN throw IllegalArgumentException")
+    @DisplayName ("GIVEN an instance of HashMap of tasks "
+            + "WHEN calling Task by non-existent id "
+            + "THEN throw IllegalArgumentException")
     @Test
     void test2_1_getTaskByWrongIdShouldThrowIllegalArgumentException() {
         Task task = new Task("Задача 1", "Просто текст", NEW);
@@ -65,7 +72,9 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertThrows(IllegalArgumentException.class, () -> taskManager.getTaskById(2));
     }
 
-    @DisplayName ("GIVEN an instance of empty HashMap " + "WHEN calling Task by id " + "THEN throw IllegalArgumentException")
+    @DisplayName ("GIVEN an instance of empty HashMap "
+            + "WHEN calling Task by id "
+            + "THEN throw IllegalArgumentException")
     @Test
     void test2_2_getTaskByIdFromEmptyMapShouldThrowIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, () -> taskManager.getTaskById(1));

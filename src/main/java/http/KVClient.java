@@ -6,59 +6,33 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-class KVClient {
-    private static String key;
-    private final String url;
+public class KVClient {
+    private final HttpClient client;
+    private final URI url;
+    private final String apikey;
 
-    public KVClient(String url) {
-        HttpClient client = HttpClient.newHttpClient();
+    public KVClient(URI url) throws IOException, InterruptedException {
         this.url = url;
-        key = getKey();
+        this.client = HttpClient.newHttpClient();
+        URI registerUrl = URI.create(url + "/register");
+        HttpRequest request = HttpRequest.newBuilder().uri(registerUrl).GET().build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        apikey = response.body();
     }
 
-    public String load(String key) {
-        String answer = "";
-        HttpClient client = HttpClient.newHttpClient();
-        URI loadUrl = URI.create(url + "load" + "/" + key + "/" + "?API_KEY=" + KVClient.key);
-        HttpRequest request = HttpRequest.newBuilder().uri(loadUrl).GET().build();
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            answer = response.body();
-        } catch (IOException | InterruptedException e) {
-            System.out.println("Во время выполнения запроса ресурса по url-адресу: '" + loadUrl + "', возникла ошибка.\n" +
-                    "Проверьте, пожалуйста, адрес и повторите попытку.");
-        }
-        return answer;
+    public void put(String key, String json) throws IOException, InterruptedException {
+        URI saveUrl = URI.create(url + "/save/" + key + "?API_KEY=" + apikey);
+        HttpRequest request = HttpRequest.newBuilder().uri(saveUrl)
+                .POST(HttpRequest.BodyPublishers.ofString(json)).build();
+        client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    private String getKey() {
-        String text = "";
-        HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create(this.url + "register/");
-        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            text = response.body();
-        } catch (IOException | InterruptedException e) {
-            System.out.println("Во время выполнения запроса ресурса по url-адресу: '" + url + "', возникла ошибка.\n" +
-                    "Проверьте, пожалуйста, адрес и повторите попытку.");
-        }
-        return text;
-    }
-
-    public void put(String key, String json) {
-        URI url = URI.create(this.url + "save/" + key + "/?API_KEY=" + KVClient.key);
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .POST(HttpRequest.BodyPublishers.ofString(json))
-                .build();
-        try {
-            client.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            System.out.println("Во время выполнения запроса ресурса по url-адресу: '" + url + "', возникла ошибка.\n" +
-                    "Проверьте, пожалуйста, адрес и повторите попытку.");
-        }
+    public String load(String key) throws IOException, InterruptedException {
+        URI saveUrl = URI.create(url + "/load/" + key + "?API_KEY=" + apikey);
+        HttpRequest request = HttpRequest.newBuilder().uri(saveUrl).GET().build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return response.body();
     }
 }
+
 

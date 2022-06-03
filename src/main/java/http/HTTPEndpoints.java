@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import managers.FileBackedTasksManager;
+import managers.InMemoryTaskManager;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
@@ -12,6 +12,7 @@ import tasks.Task;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -19,7 +20,15 @@ import java.time.LocalDateTime;
 
 public class HTTPEndpoints {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-    static FileBackedTasksManager manager = new FileBackedTasksManager();
+    private static final HTTPTaskManager manager;
+
+    static {
+        try {
+            manager = new HTTPTaskManager(URI.create("http://localhost:8078"));
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     static class TaskHandler implements HttpHandler {
         @Override
@@ -46,7 +55,7 @@ public class HTTPEndpoints {
 
                     break;
                 case "GET":
-                    response = gson.toJson(manager.getAllTasks());
+                    response = gson.toJson(InMemoryTaskManager.getTasks());
                     break;
                 case "DELETE":
                     if (query != null) {

@@ -11,7 +11,7 @@ import java.util.Map;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class KVServer {
-    public static final int PORT = 8078;
+    private static final int PORT = 8078;
     private final String apiToken;
     private final HttpServer server;
     private final Map<String, String> data = new HashMap<>();
@@ -22,6 +22,10 @@ public class KVServer {
         server.createContext("/register", this::register);
         server.createContext("/save", this::save);
         server.createContext("/load", this::load);
+    }
+
+    public void stop() {
+        server.stop(0);
     }
 
     private void load(HttpExchange h) throws IOException {
@@ -40,8 +44,10 @@ public class KVServer {
                     return;
                 }
                 data.get(key);
-                System.out.println("Значение для ключа " + key + " успешно выдано!");
+                System.out.println("Значение для " + key + " успешно выдано!");
                 h.sendResponseHeaders(200, 0);
+                byte[] text = data.get(key).getBytes(UTF_8);
+                h.getResponseBody().write(text);
             } else {
                 System.out.println("/load ждёт GET-запрос, а получил: " + h.getRequestMethod());
                 h.sendResponseHeaders(405, 0);
